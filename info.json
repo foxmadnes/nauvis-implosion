@@ -1,0 +1,9 @@
+{
+    "name": "nauvis-implosion",
+    "version": "0.0.1",
+    "title": "Nauvis Implosion",
+    "author": "foxmadnes",
+    "factorio_version": "2.0",
+    "dependencies": ["base >= 2.0"],
+    "description": "This mod add a countdown to nauvis imploding, destroying Nauvis and altering the game loop."
+  }
