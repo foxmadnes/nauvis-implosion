@@ -1,10 +1,10 @@
-local function display_string_to_all_players(string)
-   for index,player in pairs(game.connected_players) do  --loop through all online players on the server
-      local label = player.gui.top["time"]
+local function display_message_to_all_players(message, type)
+   for _,player in pairs(game.connected_players) do
+      local label = player.gui.top[type]
       if label==nil then
-         player.gui.top.add{type="label", name="time", caption=string}
+         player.gui.top.add{type="label", name=type, caption=message}
       else
-         label.caption = string   
+         label.caption = message   
       end           
    end
 end
@@ -16,45 +16,72 @@ local function display_time(remainingTicks)
    local minutes = math.floor(seconds/60)
    local m = minutes%60
 
-   local hours = math.floor(minutes/60)
-   local h = hours%24
-
-   local d = math.floor(hours/24)
+   local h = math.floor(minutes/60)
    
-   local dhms = string.format("Estimated time until implosion: %02d:%02d:%02d:%02d", d, h, m, s)
+   local dhms = string.format("Estimated time until implosion: %d:%02d:%02d", h, m, s)
 
-   display_string_to_all_players(dhms)
+   display_message_to_all_players(dhms, "time")
+end
+
+local function count_and_update_active_nauvis_timers()
+   -- TODO: Figure out how to only count active drills from nauvis_surface.find_entities_filtered since active is incorrect and is_crafting is 
+   -- only for assemblers
+
+   local nauvis_surface = game.surfaces["nauvis"]
+   local total_count = nauvis_surface.count_entities_filtered{name = {"burner-mining-drill","electric-mining-drill","big-mining-drill"}}
+   storage.mining_coefficient = 0.001 * total_count
+   local miner_message = string.format("Using %d miners causing Nauvis to implode %.1f%% faster.", total_count, storage.mining_coefficient*100)
+   display_message_to_all_players(miner_message, "miner")
+end
+
+local function explode_nauvis() 
+   game.play_sound({path="nauvis-explosion-sound"})
+   -- explode
+   storage.nauvis_exploded = true
+   display_message_to_all_players("Nauvis has exploded", "time")
+   display_message_to_all_players("", "miner")
+   local nauvis_surface = game.surfaces["nauvis"]
+   for chunk in nauvis_surface.get_chunks() do
+      nauvis_surface.delete_chunk({chunk.x, chunk.y})
+      nauvis_surface.generate_with_lab_tiles = true
+   end
+end
+
+local function nauvis_countdown(e)
+   -- Only count down each second
+   if not storage.nauvis_exploded and e.tick % 60 == 0 then
+      if (e.tick % 3600 == 0) then
+         count_and_update_active_nauvis_timers()
+      end
+
+      storage.remaining_ticks = storage.remaining_ticks - 60 * (1 + storage.mining_coefficient)
+
+      if (storage.remaining_ticks <= 0) then
+         explode_nauvis()
+         return
+      end
+
+      display_time(storage.remaining_ticks / (1 + storage.mining_coefficient))
+   end
 end
 
 script.on_init(
    function ()
       storage.nauvis_exploded = storage.nauvis_exploded or false
+      storage.remaining_ticks = 2592000
+      storage.mining_coefficient = 0
       if not storage.nauvis_exploded then
          storage.nauvis_exploded = false
       end
+      script.on_event({defines.events.on_tick}, nauvis_countdown)
    end
 )
 
-script.on_event({defines.events.on_tick},
-   function (e)
-      if not storage.nauvis_exploded and e.tick % 60 == 0 then
-         local total_time_ticks =  300 --8640000
-         local remaining_ticks = total_time_ticks - e.tick
-
-         if (remaining_ticks <= 0) then
-            -- game.play_sound("NauvisExplosion")
-            -- explode
-            storage.nauvis_exploded = true
-            display_string_to_all_players("Nauvis has exploded")
-            local nauvis_surface = game.surfaces["nauvis"]
-            for chunk in nauvis_surface.get_chunks() do
-               nauvis_surface.delete_chunk({chunk.x, chunk.y})
-               nauvis_surface.generate_with_lab_tiles = true
-            end
-            return
-         end
-
-         display_time(remaining_ticks)
+script.on_load(
+   function ()
+      -- Only use the script on reload if nauvis hasn't exploded, to save performance
+      if not storage.nauvis_exploded then
+         script.on_event({defines.events.on_tick}, nauvis_countdown)
       end
    end
 )
