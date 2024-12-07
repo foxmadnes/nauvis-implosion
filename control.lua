@@ -9,6 +9,8 @@ local function display_message_to_all_players(message, type)
    end
 end
 
+-- /c game.player.teleport({0,0},gehenna)  
+
 local function display_time(remainingTicks)
    local seconds = math.floor(remainingTicks/60)
    local s = seconds%60
@@ -16,7 +18,7 @@ local function display_time(remainingTicks)
    local minutes = math.floor(seconds/60)
    local m = minutes%60
 
-   local h = math.floor(minutes/60)
+   local h = math.floor(minutes/60)  
    
    local dhms = string.format("Estimated time until implosion: %d:%02d:%02d", h, m, s)
 

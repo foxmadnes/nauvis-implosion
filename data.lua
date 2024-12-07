@@ -5,3 +5,6 @@ data:extend({
         filename = "__nauvis-implosion__/sound/nauvis_explosion_sound.ogg"
     }
 })
+
+require "prototypes.planet.gehenna"
+require "prototypes.technology"
