@@ -1,9 +1,9 @@
 {
     "name": "nauvis-implosion",
     "version": "0.0.1",
-    "title": "Nauvis Implosion",
+    "title": "Nauvis Implosion and Gehenna",
     "author": "foxmadnes",
     "factorio_version": "2.0",
     "dependencies": ["base >= 2.0"],
-    "description": "This mod add a countdown to nauvis imploding, destroying Nauvis and altering the game loop."
+    "description": "This mod add a countdown to nauvis imploding, destroying Nauvis and altering the game loop. It also includes a new planet similar to a Nauvis Hellworld to acquire Nauvis resources later."
   }
