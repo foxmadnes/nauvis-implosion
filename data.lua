@@ -7,4 +7,5 @@ data:extend({
 })
 
 require "prototypes.planet.gehenna"
+require "prototypes.decorative.decoratives"
 require "prototypes.technology"

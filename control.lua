@@ -8,8 +8,8 @@ local function display_message_to_all_players(message, type)
       end           
    end
 end
-
--- /c game.player.teleport({0,0},gehenna)  
+-- /c game.planets['gehenna'].create_surface()
+-- /c game.player.teleport({0,0},'gehenna')  
 
 local function display_time(remainingTicks)
    local seconds = math.floor(remainingTicks/60)

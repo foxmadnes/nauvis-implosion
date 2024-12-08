@@ -1,4 +1,5 @@
 local asteroid_util = require("__space-age__.prototypes.planet.asteroid-spawn-definitions")
+local gehenna_map_gen = require("__nauvis-implosion__/prototypes/planet/gehenna-map-gen")
 
 ---Creates a new prototype by cloning 'old' and overwriting it with properties from 'new'. Provide 'nil' as a string in order to delete items inside 'old'
 ---@param old data.AnyPrototype
@@ -30,6 +31,7 @@ data:extend {merge(data.raw.planet.nauvis, {
     asteroid_spawn_definitions = asteroid_util.spawn_definitions(asteroid_util.gleba_aquilo, 0.9),
     icon = "__nauvis-implosion__/graphics/icons/gehenna.png",
     starmap_icon = "__nauvis-implosion__/graphics/icons/starmap-planet-gehenna.png",
+    map_gen_settings = gehenna_map_gen,
 })}
 
 data:extend{{
