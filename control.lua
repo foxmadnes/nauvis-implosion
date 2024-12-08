@@ -26,13 +26,16 @@ local function display_time(remainingTicks)
 end
 
 local function count_and_update_active_nauvis_timers()
-   -- TODO: Figure out how to only count active drills from nauvis_surface.find_entities_filtered since active is incorrect and is_crafting is 
-   -- only for assemblers
-
    local nauvis_surface = game.surfaces["nauvis"]
-   local total_count = nauvis_surface.count_entities_filtered{name = {"burner-mining-drill","electric-mining-drill","big-mining-drill"}}
+   local all_drills = nauvis_surface.find_entities_filtered{name = {"burner-mining-drill","electric-mining-drill","big-mining-drill"}}
+   local total_count = 0
+   for _,drill in pairs(all_drills) do
+      if drill.status == defines.entity_status.working then
+         total_count = total_count + 1
+      end
+   end
    storage.mining_coefficient = 0.001 * total_count
-   local miner_message = string.format("Using %d miners causing Nauvis to implode %.1f%% faster.", total_count, storage.mining_coefficient*100)
+   local miner_message = string.format("%d active miners causing Nauvis to implode %.1f%% faster.", total_count, storage.mining_coefficient*100)
    display_message_to_all_players(miner_message, "miner")
 end
 
