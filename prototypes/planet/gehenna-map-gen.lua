@@ -18,7 +18,7 @@ data:extend {
     {
       elevation_magnitude = 1,
       starting_lake = "elevation_magnitude * (-3 + (starting_lake_distance + starting_lake_noise) / 8) / 8",
-      starting_lake_distance = "distance_from_nearest_point{x = x, y = y, points = starting_lake_positions, maximum_distance = 1000000024}",
+      starting_lake_distance = "distance_from_nearest_point{x = x, y = y, points = starting_lake_positions, maximum_distance = 1024}",
       starting_lake_noise = "quick_multioctave_noise_persistence{x = x,\z
                                                                 y = y,\z
                                                                 seed0 = map_seed,\z
