@@ -50,7 +50,7 @@ nauvis_implosion_map_gen.gehenna = function()
       ["coal"] = {},
       ["uranium-ore"] = {},
       ["crude-oil"] = {},
-      ["enemy-base"] = { frequency = "very-high", size = "very-big"},
+      ["enemy-base"] = { frequency = 6, size = 6},
       ["rocks"] = {},
     },
     autoplace_settings =

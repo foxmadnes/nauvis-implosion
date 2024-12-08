@@ -34,7 +34,7 @@ local function count_and_update_active_nauvis_timers()
          total_count = total_count + 1
       end
    end
-   storage.mining_coefficient = 0.001 * total_count
+   storage.mining_coefficient = settings.global["miner-implosion-speedup-coefficient"].value * total_count
    local miner_message = string.format("%d active miners causing Nauvis to implode %.1f%% faster.", total_count, storage.mining_coefficient*100)
    display_message_to_all_players(miner_message, "miner")
 end
@@ -70,15 +70,25 @@ local function nauvis_countdown(e)
    end
 end
 
+local function set_high_evolution()
+   if game.surfaces["gehenna"] ~= nil and not storage.gehenna_evolution_set then
+      game.forces["enemy"].set_evolution_factor(0.9, "gehenna")
+      script.on_event({defines.events.on_surface_created}, nil)
+      storage.gehenna_evolution_set = true
+   end
+end
+
 script.on_init(
    function ()
       storage.nauvis_exploded = storage.nauvis_exploded or false
-      storage.remaining_ticks = 2592000
+      storage.remaining_ticks = settings.global["hours-until-nauvis-implosion"].value * 216000
       storage.mining_coefficient = 0
+      storage.gehenna_evolution_set = false
       if not storage.nauvis_exploded then
          storage.nauvis_exploded = false
       end
       script.on_event({defines.events.on_tick}, nauvis_countdown)
+      script.on_event({defines.events.on_surface_created}, set_high_evolution)
    end
 )
 
@@ -87,6 +97,9 @@ script.on_load(
       -- Only use the script on reload if nauvis hasn't exploded, to save performance
       if not storage.nauvis_exploded then
          script.on_event({defines.events.on_tick}, nauvis_countdown)
+      end
+      if not storage.gehenna_evolution_set then
+         script.on_event({defines.events.on_surface_created}, set_high_evolution)
       end
    end
 )

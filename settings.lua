@@ -3,7 +3,7 @@ data:extend({
         type = "int-setting",
         name = "hours-until-nauvis-implosion",
         setting_type = "runtime-global",
-        default_value = 12
+        default_value = 8
     }
 })
 
